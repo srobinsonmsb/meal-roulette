@@ -1,4 +1,4 @@
-# Meal Planner
+# Meal Roulette
 
 A self-hosted weekly meal planning tool that generates randomized meal schedules based on personal preferences, supports per-person meal assignments, and pushes confirmed plans to a shared Google Calendar.
 
@@ -42,7 +42,7 @@ Built as a learning project to practice Python, PostgreSQL, API integration, and
 ## Project Structure
 
 ```
-meal-planner/
+meal-roulette/
 ├── docker-compose.yml          # PostgreSQL container config
 ├── schema.sql                  # Database schema DDL
 ├── README.md
@@ -85,8 +85,8 @@ The database uses four tables:
 
 1. Clone the repo:
    ```bash
-   git clone git@github.com:srobinsonmsb/meal-planner.git
-   cd meal-planner
+   git clone git@github.com:srobinsonmsb/meal-roulette.git
+   cd meal-roulette
    ```
 
 2. Start the database:
