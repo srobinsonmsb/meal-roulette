@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Eaters</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #4a90d9; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .btn { padding: 4px 10px; margin: 2px; border: none; border-radius: 4px; cursor: pointer; color: white; }
+        .btn-add { background-color: #27ae60; }
+        .btn-delete { background-color: #e74c3c; }
+        .btn-back_to_schedule { background-color: #34495e; padding: 10px 24px; font-size: 16px; margin-top: 16px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>Manage Eaters</h1>
+    <a href="/" class="btn btn-back_to_schedule">Back to Schedule</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        {% for eater_id, name in eaters.items() %}
+        <tr>
+            <td>{{ eater_id }}</td>
+            <td>{{ name }}</td>
+            <td>
+                <a href="/manage/eaters/delete/{{ eater_id }}" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete {{ name }}? \nThis will delete ALL data associated with this eater.')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    
+    </table>
+    <form action="/manage/eaters/add" method="POST">
+    <input type="text" name="eater_name" placeholder="Enter name" required>
+    <button type="submit" class="btn btn-add">Add Eater</button>
+</form>
+</body>
+</html>
