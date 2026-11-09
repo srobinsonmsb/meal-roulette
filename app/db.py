@@ -135,7 +135,7 @@ class Database:
                             raise DataError(f"Invalid columns for {table}.")
                         values = dict(row)
                         for column, value in values.items():
-                            if column.endswith("_id") or column == "revision":
+                            if column in ("eater_id", "meal_id", "plan_id", "routine_id", "ingredient_id", "item_id", "revision"):
                                 if value is None and ((column == "meal_id" and table == "assignments") or (column == "ingredient_id" and table == "shopping_items")):
                                     continue
                                 if type(value) is not int or not 1 <= value <= 2**63 - 1:

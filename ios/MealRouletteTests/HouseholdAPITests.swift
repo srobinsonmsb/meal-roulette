@@ -2,6 +2,32 @@ import XCTest
 @testable import MealRoulette
 
 final class HouseholdAPITests: XCTestCase {
+    func testNewPlanDefaultsToUpcomingMondayLikeTheWebClient() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let sunday = calendar.date(from: DateComponents(year: 2026, month: 11, day: 8))!
+        let monday = calendar.date(from: DateComponents(year: 2026, month: 11, day: 9))!
+        XCTAssertEqual(upcomingMonday(from: sunday, calendar: calendar), monday)
+        XCTAssertEqual(upcomingMonday(from: monday, calendar: calendar), monday)
+    }
+
+    @MainActor
+    func testPhoneCacheCanBeReadWithoutAConnectionAndClearedLocally() async throws {
+        let connected = HouseholdStore()
+        await connected.connect(address: "http://127.0.0.1:5057")
+        XCTAssertNil(connected.errorMessage)
+        XCTAssertNotNil(connected.lastSynced)
+        let cached = HouseholdStore()
+        XCTAssertTrue(cached.offline)
+        XCTAssertFalse(cached.plans.isEmpty)
+        XCTAssertNotNil(cached.groceries)
+        cached.clearCache()
+        XCTAssertNil(cached.lastSynced)
+        let empty = HouseholdStore()
+        XCTAssertNil(empty.lastSynced)
+        XCTAssertTrue(empty.plans.isEmpty)
+    }
+
     func testAddressesRejectNonHTTPAndEmbeddedCredentials() throws {
         XCTAssertThrowsError(try HouseholdAPI(address: "file:///tmp/meal"))
         XCTAssertThrowsError(try HouseholdAPI(address: "https://user:password@example.com"))

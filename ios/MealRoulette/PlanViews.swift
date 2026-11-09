@@ -1,5 +1,10 @@
 import SwiftUI
 
+func upcomingMonday(from today: Date = Date(), calendar: Calendar = Calendar(identifier: .iso8601)) -> Date {
+    let offset = (9 - calendar.component(.weekday, from: today)) % 7
+    return calendar.startOfDay(for: calendar.date(byAdding: .day, value: offset, to: today)!)
+}
+
 func weekDates(_ start: String) -> [String] {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -120,7 +125,7 @@ struct ChooseMealView: View {
 struct NewPlanView: View {
     @EnvironmentObject var store: HouseholdStore
     @Environment(\.dismiss) var dismiss
-    @State private var start = Calendar(identifier: .iso8601).dateInterval(of: .weekOfYear, for: Date())!.start
+    @State private var start = upcomingMonday()
     @State private var breakfast = false
     @State private var lunch = false
     @State private var dinner = true

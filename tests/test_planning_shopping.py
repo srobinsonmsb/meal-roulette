@@ -216,3 +216,35 @@ def test_calendar_publish_retry_updates_and_removals_use_stable_ids(app, client,
     plan = override(client, plan, WEEK, [])
     assert app.test_cli_runner().invoke(args=["sync-calendar"]).exit_code == 0
     assert len(calendar.events) == 12
+
+
+def test_recovery_preserves_populated_routines_shopping_and_calendar_state(app, client, seeded, make_app, tmp_path):
+    calendar = Calendar()
+    app.config.update(CALENDAR_PUBLISHER=calendar, CALENDAR_ENABLED=True)
+    client.put("/api/routines/4/dinner", json={"kind": "eating_out"})
+    plan = one_dinner(client, seeded)
+    ingredients(client, seeded["meals"][0], [{"name": "Onion", "amount": "2", "unit": "each"}])
+    url = f"/api/plans/{plan['plan_id']}/groceries"
+    listing = client.get(url).json
+    client.post(url, json={"revision": listing["revision"], "name": "Soap"})
+    plan = client.post(f"/api/plans/{plan['plan_id']}/confirm", json={"revision": plan["revision"]}).json
+    assert client.post(f"/api/plans/{plan['plan_id']}/publish", json={"revision": plan["revision"], "dry_run": False}).status_code == 200
+    plan = client.patch(assignment_url(plan, plan["assignments"][0]), json={"revision": plan["revision"], "action": "leftovers"}).json
+    client.get(url)
+    document = client.get("/api/export").json
+    for table in ("settings", "routines", "slot_overrides", "ingredients", "meal_ingredients", "shopping_items", "shopping_state", "calendar_state", "calendar_publications", "calendar_jobs"):
+        assert document["data"][table], table
+    imported = make_app("full-json").test_client()
+    imported_response = imported.post("/api/import", json=document)
+    assert imported_response.status_code == 201, imported_response.json
+    assert imported.get("/api/export").json == document
+    backup = tmp_path / "all-records.sqlite3"
+    backup.write_bytes(client.get("/api/backup").data)
+    destination = tmp_path / "full-database.sqlite3"
+    result = app.test_cli_runner().invoke(args=["restore", str(backup), "--destination", str(destination)])
+    assert result.exit_code == 0, result.output
+    recovered = make_app("full-database", CALENDAR_ENABLED=True, CALENDAR_PUBLISHER=calendar)
+    assert recovered.test_client().get("/api/export").json == document
+    ids = set(calendar.events)
+    assert recovered.test_cli_runner().invoke(args=["sync-calendar"]).exit_code == 0
+    assert set(calendar.events) == ids
