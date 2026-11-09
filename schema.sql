@@ -39,3 +39,4 @@ CREATE TABLE meal_schedule (
   Eat_Out BOOLEAN,
   PRIMARY KEY (Date, Meal_Type, Eater_ID)
 );
+

@@ -1,90 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Meal Planner</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #4a90d9; color: white; }
-        tr:nth-child(even) { background-color: #f2f2f2; }
-        .eat-out { color: #e67e22; font-weight: bold; }
-        .btn { padding: 4px 10px; margin: 2px; border: none; border-radius: 4px; cursor: pointer; color: white; }
-        .btn-reroll { background-color: #3498db; }
-        .btn-eatout { background-color: #e67e22; }
-        .btn-confirm { background-color: #27ae60; padding: 10px 24px; font-size: 16px; margin-top: 16px; }
-        .btn-regenerate { background-color: #8e44ad; padding: 10px 24px; font-size: 16px; margin-top: 16px; }
-        .btn-manage { background-color: #34495e; padding: 10px 24px; font-size: 16px; margin-top: 16px; text-decoration: none; }
-        .flash {
-    padding: 12px 16px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    font-weight: bold;
-}
-.flash.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-.flash.info {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-}
-.flash.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-    </style>
-</head>
-<body>
-    <h1>Meal Planner</h1>
-        <br>
-    <a href="/confirm" class="btn btn-confirm">Confirm & Push to Calendar</a>
-    <a href="/regenerate" class="btn btn-regenerate">Regenerate Schedule</a>
-    <br><br>
-    <br><br>
-    <a href="/manage/eaters" class="btn btn-manage">Manage Eaters</a>
-    <a href="/manage/meals" class="btn btn-manage">Manage Meals</a>
-    <a href="/manage/preferences" class="btn btn-manage">Manage Preferences</a>
-    <br><br>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-    <table>
-        <tr>
-            <th>#</th>
-            <th>Date</th>
-            <th>Meal</th>
-            <th>Who</th>
-            <th>What</th>
-            <th>Actions</th>
-        </tr>
-        {% for item in schedule %}
-        <tr>
-            <td>{{ item.index }}</td>
-            <td>{{ item.date }}</td>
-            <td>{{ item.meal_type }}</td>
-            <td>{{ item.eater_name }}</td>
-            <td>
-                {% if item.eat_out %}
-                    <span class="eat-out">Eating Out</span>
-                {% else %}
-                    {{ item.meal_name }}
-                {% endif %}
-            </td>
-            <td>
-                <a href="/reroll/{{ item.index }}" class="btn btn-reroll">Reroll</a>
-                <a href="/eat-out/{{ item.index }}" class="btn btn-eatout">Eat Out</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h1>Weekly meal plans</h1>
+<form method="post" action="/plans">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Week starting Monday <input type="date" name="week_start" value="{{ monday }}" required></label>
+  <label><input type="checkbox" name="meal_types" value="breakfast">Breakfast</label>
+  <label><input type="checkbox" name="meal_types" value="lunch">Lunch</label>
+  <label><input type="checkbox" name="meal_types" value="dinner" checked>Dinner</label>
+  <button>Create draft</button>
+</form>
+{% if plans %}
+<form method="get" action="/">
+  <label>Saved week <select name="plan">{% for item in plans %}<option value="{{ item.plan_id }}" {% if plan and item.plan_id == plan.plan_id %}selected{% endif %}>{{ item.week_start }} — {{ item.state }}</option>{% endfor %}</select></label>
+  <button>Open</button>
+</form>
+{% endif %}
+{% if plan %}
+<h2>Week of {{ plan.week_start }} · {{ plan.state }}</h2>
+<p><a href="/plans/{{ plan.plan_id }}/groceries">Open shared grocery list →</a></p>
+<p>This plan is saved. You can return to it and make changes during the week.</p>
+<div class="actions">
+  <form method="post" action="/plans/{{ plan.plan_id }}/confirm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ plan.revision }}">
+    <button>Confirm plan</button>
+  </form>
+  {% if plan.state == 'draft' %}
+  <form method="post" action="/plans/{{ plan.plan_id }}/regenerate">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ plan.revision }}">
+    <button>Regenerate unchosen meals</button>
+  </form>
+  {% else %}
+  <form method="post" action="/plans/{{ plan.plan_id }}/publish">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ plan.revision }}">
+    <button>Preview calendar events</button>
+  </form>
+  {% if calendar_enabled %}<form method="post" action="/plans/{{ plan.plan_id }}/publish-live"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ plan.revision }}"><button>Publish to Google Calendar</button></form>{% endif %}
+  {% endif %}
+</div>
+{% if plan.calendar_job %}<p class="notice">Calendar update queued.{% if plan.calendar_job.last_error %} {{ plan.calendar_job.last_error }}{% endif %}</p>{% endif %}
+<table>
+<thead><tr><th>Date</th><th>Mealtime</th><th>Who</th><th>Dinner choice</th><th>Change</th></tr></thead>
+<tbody>{% for slot in plan.assignments %}
+<tr><td>{{ slot.date }}</td><td>{{ slot.meal_type }}</td><td>{{ slot.eater_name }}{% if slot.group_meal %}<br><small>Shared meal</small>{% endif %}</td>
+<td>{% if slot.kind == 'eating_out' %}Eating out{% elif slot.kind == 'leftovers' %}Leftovers{% else %}{{ slot.meal_name or 'No meal assigned' }}{% if slot.reason %}<br><small>{{ slot.reason }}</small>{% endif %}{% endif %}</td>
+<td><form method="post" action="/plans/{{ plan.plan_id }}/assignments/{{ slot.eater_id }}/{{ slot.date }}/{{ slot.meal_type }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ plan.revision }}">
+  <button name="action" value="reroll">Reroll</button><button name="action" value="eating_out">Eating out</button><button name="action" value="leftovers">Leftovers</button>
+</form>
+<form method="post" action="/plans/{{ plan.plan_id }}/assignments/{{ slot.eater_id }}/{{ slot.date }}/{{ slot.meal_type }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ plan.revision }}">
+  <select name="meal_id" aria-label="Choose a meal for {{ slot.eater_name }} on {{ slot.date }}">
+    {% for meal in meals if meal.active and meal.meal_type == slot.meal_type %}<option value="{{ meal.meal_id }}" {% if meal.meal_id == slot.meal_id %}selected{% endif %}>{{ meal.meal_description }}</option>{% endfor %}
+  </select><button name="action" value="meal">Choose meal</button>
+</form></td></tr>
+{% endfor %}</tbody></table>
+<h3>Change this week's dinner settings</h3><p>Choose who is eating, a shared or solo meal, and any effort or theme exception.</p>
+<div class="actions">{% for day in days %}{% for mealtime in plan.meal_types %}<a href="/plans/{{ plan.plan_id }}/slots/{{ day }}/{{ mealtime }}">{{ day }} · {{ mealtime }}</a>{% endfor %}{% endfor %}</div>
+{% else %}
+<p>Add your household members, meals, and preference lists, then create your first draft.</p>
+{% endif %}
+<p><a href="/api/export">Export all household data</a> · <a href="/api/backup">Download database backup</a></p>
+{% endblock %}

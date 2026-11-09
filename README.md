@@ -1,155 +1,136 @@
 # Meal Roulette
 
-A self-hosted weekly meal planning tool that generates randomized meal schedules based on personal preferences, supports per-person meal assignments, and pushes confirmed plans to a shared Google Calendar.
+A private, MIT-licensed household meal planner. Run one copy on your home server, plan the week together, and keep ownership of your data. There is no vendor login, advertising SDK, or central collection of household records.
 
-Built as a learning project to practice Python, PostgreSQL, API integration, and web development on a Raspberry Pi.
+## What it does
 
-## What It Does
+- Shared, durable draft and confirmed weekly plans, starting with dinner.
+- Explicit per-person preference lists and shared/solo meal assignments.
+- Quick/moderate/involved effort, themes, weekly routines, and per-date diner exceptions.
+- Weekly dinner variety, with constrained days protected from losing their only candidate.
+- Manual choices, rerolls, eating out, and simple leftovers labels.
+- Meal ingredient amounts and yields; shared grocery quantities scaled to the people eating.
+- Purchased/already-owned marks, manual shopping extras, and review when generated quantities change.
+- One-way Google Calendar publication with stable event IDs, updates/removals, and durable retries.
+- Versioned JSON export/import, online database backups, restore to a new installation, and legacy PostgreSQL conversion.
+- An optional owner-configured local/cloud backup schedule.
+- Web and native iOS clients of the same household server. See [the iOS project](ios/README.md).
 
-- Generates a weekly meal schedule (Monday–Sunday) from a personal meal database
-- Handles group meals (shared dinners, weekend meals) and solo meals (weekday breakfasts/lunches)
-- Respects per-person meal preferences so each person only gets meals they like
-- Prevents duplicate dinners across the week
-- Lets you reroll individual meal slots or flag meals as eating out
-- Saves confirmed schedules to PostgreSQL
-- Pushes confirmed schedules to a shared Google Calendar
-- Includes both a CLI and a Flask web interface
-- Manage meals, eaters, and preferences through the web UI (add/delete, with duplicate detection on meal names)
+Recipe instructions/imports, nutrition, other calendar/planner destinations, direct notifications, optional local authentication, and a device-only iOS edition remain [future branches](docs/roadmap.md).
 
-## How It Works
+## Start locally
 
-**Schedule defaults:**
-- Weekdays: breakfast and lunch are solo (each person gets their own meal), dinner is a group meal
-- Weekends: all meals are group meals
-- These defaults are configurable in `config.py`
+Use Python 3.11 or newer. With uv:
 
-**Workflow:**
-1. Run the app (CLI or web)
-2. Review the generated schedule
-3. Reroll any meals you don't want that week
-4. Flag any meals as eating out
-5. Confirm to save to the database and push to Google Calendar
+~~~sh
+uv sync --frozen
+uv run flask --app app run
+~~~
 
-## Tech Stack
+Open http://127.0.0.1:5000. For development access on your trusted household LAN, add --host 0.0.0.0. Alternatively, install app/requirements.txt in a virtual environment and run python -m app.
 
-- **Python 3.11** — scheduling logic, CLI, and Flask web server
-- **PostgreSQL 15** — meal data, preferences, and schedule storage (runs in Docker)
-- **Flask** — web interface for schedule review and editing
-- **Google Calendar API** — pushes confirmed meal events to a shared calendar
-- **Docker & Docker Compose** — containerized database
-- **Raspberry Pi 5** — always-on host for the database and web interface
+Add household members, named meals and preference lists, then create a week using its Monday date. Add ingredient amounts on each meal's details page to populate the grocery list. A recipe is not required.
 
-## Project Structure
+SQLite is created automatically at instance/meal-roulette.sqlite3; no separate database service or Docker container is required. Keep the file on local disk and let clients connect over HTTP.
 
-```
-meal-roulette/
-├── docker-compose.yml          # PostgreSQL container config
-├── schema.sql                  # Database schema DDL
-├── README.md
-└── app/
-    ├── .env                    # DB credentials, Google Calendar ID (not committed)
-    ├── credentials.json        # Google OAuth client config (not committed)
-    ├── token.json              # Google OAuth token (not committed)
-    ├── requirements.txt
-    ├── config.py               # Schedule defaults, date logic, env loading
-    ├── db.py                   # Database connection and query functions
-    ├── scheduler.py            # Schedule building, display, reroll, eat-out logic
-    ├── calendar_service.py     # Google Calendar auth and event creation
-    ├── main.py                 # CLI entry point
-    ├── app.py                  # Flask web entry point
-    └── templates/
-        ├── index.html              # Main schedule view
-        ├── manage_eaters.html      # Add/delete eaters
-        ├── manage_meals.html       # Add/delete meals
-        └── manage_preferences.html # Manage per-eater meal preferences
-```
+## Managed household server and Tailscale
 
-## Database Schema
+~~~sh
+uv sync --frozen
+python3 deploy/install_service.py
+systemctl --user status meal-roulette.service
+tailscale serve --bg --https=8445 http://127.0.0.1:5057
+~~~
 
-The database uses four tables:
+Use the HTTPS URL printed by Tailscale. The server binds to loopback and trusts proxy headers only from loopback. The installer creates only Meal Roulette's own user service and Calendar/backup timers; it does not change Tailscale routes. Choose an unused Serve port to preserve other household services. Use loginctl enable-linger for your user if these services must persist after logout.
 
-- **meals** — stores meal definitions with a name, type (breakfast/lunch/dinner via PostgreSQL ENUM), and effort level
-- **eaters** — the people using the system
-- **eater_meal_preferences** — a many-to-many junction table mapping which eaters like which meals
-- **meal_schedule** — the generated weekly plan with a composite primary key of (date, meal_type, eater_id) and an upsert strategy for re-runnability
+Configuration is optional. Copy app/.env.example to app/.env and set only the values you need. Useful options include MEAL_ROULETTE_DATABASE, MEAL_ROULETTE_DATA_DIR, MEAL_ROULETTE_TIMEZONE, and MEAL_ROULETTE_SECRET_KEY. The service installer accepts --port to change the local server port.
 
-## Setup
+Health: GET /api/health. Operator logs: journalctl --user -u meal-roulette.service.
 
-### Prerequisites
+### Upgrading
 
-- Docker and Docker Compose
-- Python 3.11+
-- A Google Cloud project with the Calendar API enabled and OAuth 2.0 credentials
+1. With the old version, make a database backup and retain your private configuration.
+2. Stop the application: systemctl --user stop meal-roulette.service.
+3. Update the source and run uv sync --frozen.
+4. Start the application: systemctl --user start meal-roulette.service.
+5. Check /api/health and reopen a saved plan and grocery list.
 
-### Installation
+Supported SQLite schema migrations run in a transaction at startup. Unknown/newer database versions are refused. Before downgrading code, restore a compatible backup into a new destination; do not open a newer database with older code.
 
-1. Clone the repo:
-   ```bash
-   git clone git@github.com:srobinsonmsb/meal-roulette.git
-   cd meal-roulette
-   ```
+## Planning and shopping rules
 
-2. Start the database:
-   ```bash
-   docker compose up -d
-   ```
+Effort levels are 1 quick, 2 moderate, and 3 involved. An effort-limited automatic choice excludes unknown effort. Automatic choices always require each relevant person's explicit approval. A draft with no possible choice leaves that assignment unfilled with an explanation.
 
-3. Create the `.env` file in the `app/` directory:
-   ```
-   DB_USER=mealplanner
-   DB_PASSWORD=your_password
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=meal_planner
-   GOOGLE_CALENDAR_ID=your_calendar_id
-   ```
+Deliberate choices survive regeneration. A weekly exception overrides the reusable routine for that date; applying a new exception replaces that dinner's current assignments. Confirmed plans remain editable and stay confirmed.
 
-4. Set up the Python environment:
-   ```bash
-   cd app
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
+Grocery amounts are divided by meal yield and multiplied by planned diners. Mass, volume, count, and custom units remain separate; compatible units combine. Cup, tbsp, and tsp use US measures. Missing ingredient records are shown as incomplete coverage. Changed generated quantities clear previous purchased/already-owned marks and need review; manual extras remain.
 
-5. Create the database schema:
-   ```bash
-   docker exec -i meal-planner-db psql -U mealplanner -d meal_planner < schema.sql
-   ```
+## Export and recovery
 
-6. Add your Google OAuth `credentials.json` to the `app/` directory. On first run, you'll need to complete the OAuth flow in a browser to generate `token.json`.
+~~~sh
+uv run flask --app app export-data instance/household.json
+uv run flask --app app backup instance/household-backup.sqlite3
+uv run flask --app app restore instance/household-backup.sqlite3 --destination /absolute/path/new-household.sqlite3
+~~~
 
-7. Start the web UI and use the manage pages (`/manage/eaters`, `/manage/meals`, `/manage/preferences`) to add eaters, meals, and preferences.
+Point MEAL_ROULETTE_DATABASE at the restored file on startup. Restore never overwrites an existing destination.
 
-### Running
+Portable JSON imports require an empty installation and are atomic:
 
-**CLI:**
-```bash
-cd app
-source venv/bin/activate
-python main.py
-```
+~~~sh
+MEAL_ROULETTE_DATABASE=/absolute/path/new-empty.sqlite3 uv run flask --app app import-data instance/household.json
+~~~
 
-**Web UI:**
-```bash
-cd app
-source venv/bin/activate
-python app.py
-```
-Then visit `http://your-host-ip:5000` in a browser.
+The browser also provides complete data-export and database-backup links. Exports include archived records, preferences, routines, exceptions, plans, assignments, shopping state, and publication mappings. Keep environment settings, provider configuration, and optional Google OAuth files separately.
 
-## Changelog
+### Optional automated backups
 
-- **Web management pages** — Added `/manage/meals`, `/manage/eaters`, and `/manage/preferences` routes with full add/delete support. No more direct SQL needed for day-to-day data management.
-- **Duplicate meal detection** — Adding a meal through the web UI now warns on exact matches (blocked) and fuzzy matches (flagged but allowed).
-- **Flask confirm/regenerate routes** — Schedule confirmation now saves to the database and pushes to Google Calendar. Regenerate clears the current schedule for a fresh draw.
-- **Google Calendar dry run mode** — Calendar pushes default to dry run; set `dry_run = False` in `confirm_schedule()` to go live.
-- **Database schema file** — `schema.sql` added to the repo root for easier setup.
+A local destination works without another tool:
 
-## Future Plans
+~~~sh
+uv run flask --app app configure-backup --destination local:/absolute/path/private-backups --interval-hours 24
+uv run flask --app app backup-due --force
+uv run flask --app app backup-status
+~~~
 
-- Ingredient-level grocery list generation
-- Nutritional data tracking
-- Meal constraint rules (no repeat proteins, themed nights)
-- Active/inactive meal flagging
-- Improved web UI with better styling and mobile support
+For cloud storage, install rclone and configure a provider yourself, then use a destination such as chosen-remote:meal-backups. For encryption before upload, select an rclone crypt remote. Provider credentials remain in the owner's rclone configuration, not in application accounts.
+
+The installed backup timer checks hourly; the configured interval controls when a snapshot is due. Snapshots and SHA-256 sidecars have unique names, do not overwrite existing backups, and are retained locally after upload failure. No automatic retention deletion is performed. Disable scheduling with disable-backups.
+
+## Existing PostgreSQL household
+
+The original schema.sql and docker-compose-example.yml describe the legacy installation. Keep it running, configure its DB_* settings in app/.env, and run:
+
+~~~sh
+uv run --extra migration flask --app app export-postgres instance/legacy-household.json
+uv run flask --app app import-data instance/legacy-household.json
+~~~
+
+The source is read in a repeatable-read, read-only transaction. IDs, preferences, effort, dates, group/eating-out flags, and nullable assignments are preserved. Saved weeks become confirmed plans. Verify the imported records before switching clients. Prior Google events had no stored IDs, so they are not automatically adopted or deleted by the new integration.
+
+## Google Calendar
+
+Saving and confirming do not require Google libraries or credentials. Preview is available without contacting Google.
+
+~~~sh
+uv sync --frozen --extra calendar
+uv run --extra calendar flask --app app authorize-google
+~~~
+
+Before authorizing, provide credentials.json under app/ or MEAL_ROULETTE_GOOGLE_DIR. Set GOOGLE_CALENDAR_ID and MEAL_ROULETTE_CALENDAR_ENABLED=true, then restart the managed server. Publishing a confirmed plan is an explicit action. After initial publication, confirmed-plan edits queue automatic updates; the Calendar timer processes retries each minute. Run sync-calendar manually to check or retry immediately.
+
+The app updates/deletes only its managed events. Stable IDs make retries safe if the server stops between a provider response and saving local publication state. External Calendar edits do not alter the household plan.
+
+## Development
+
+~~~sh
+uv sync --frozen --extra test
+uv run --extra test pytest -q
+python3 ios/generate_project.py
+~~~
+
+Backend tests exercise HTTP workflows using real temporary databases, plus migration/recovery and operator commands. Calendar and backup providers have controlled doubles. Native CI builds and tests the SwiftUI client against a synthetic local backend and produces a simulator artifact; it never accesses real household data.
+
+See [the HTTP/data contract](docs/backend-interface.md), [domain glossary](GLOSSARY.md), [architecture decisions](docs/adr), and [iOS instructions](ios/README.md).
+

@@ -11,3 +11,4 @@ services:
       POSTGRES_DB: meal_planner
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+

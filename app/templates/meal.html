@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block content %}
+<h1>{{ meal.meal_description }}</h1>
+<form method="post" action="/meals/{{ meal.meal_id }}/edit">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<p><label>Meal name <input name="meal_description" value="{{ meal.meal_description }}" required></label></p>
+<p><label>Mealtime <select name="meal_type">{% for kind in ['breakfast','lunch','dinner'] %}<option {% if kind == meal.meal_type %}selected{% endif %}>{{ kind }}</option>{% endfor %}</select></label></p>
+<p><label>Effort <select name="effort_level"><option value="">Not recorded</option>{% for value,label in [(1,'Quick'),(2,'Moderate'),(3,'Involved')] %}<option value="{{ value }}" {% if meal.effort_level == value %}selected{% endif %}>{{ label }}</option>{% endfor %}{% if meal.effort_level and meal.effort_level not in [1,2,3] %}<option value="{{ meal.effort_level }}" selected>Legacy effort {{ meal.effort_level }} — choose a new level</option>{% endif %}</select></label></p>
+<p><label>Theme <input name="theme" value="{{ meal.theme }}" placeholder="e.g. tacos"></label></p>
+<p><label>These ingredient amounts serve <input type="number" step="any" min="0.00000001" name="servings" value="{{ meal.servings }}" required> people</label></p>
+<button>Save meal details</button></form>
+{% if not meal.active %}<p>This meal is archived.</p><form method="post" action="/meals/{{ meal.meal_id }}/restore"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button>Restore meal</button></form>{% endif %}
+<h2>Ingredients</h2><p>Full recipe instructions are optional. Quantities are for the serving count above. Use g, kg, ml, l, each, or a descriptive unit. Tsp, tbsp and cup use US measures; mass and volume are kept separate.</p>
+{% if meal.active %}<form method="post" action="/meals/{{ meal.meal_id }}/ingredients"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<table><thead><tr><th>Ingredient</th><th>Amount</th><th>Unit</th><th></th></tr></thead><tbody id="ingredient-rows">
+{% for row in ingredients %}<tr><td><input name="ingredient_name" value="{{ row.name }}"></td><td><input type="number" step="any" min="0.00000001" name="amount" value="{{ row.amount }}"></td><td><input name="unit" value="{{ row.unit }}"></td><td><button type="button" onclick="this.closest('tr').remove()">Remove</button></td></tr>{% endfor %}
+<tr><td><input name="ingredient_name" placeholder="e.g. Onion"></td><td><input type="number" step="any" min="0.00000001" name="amount"></td><td><input name="unit" value="each"></td><td><button type="button" onclick="this.closest('tr').remove()">Remove</button></td></tr>
+</tbody></table><button type="button" id="add-ingredient">Add another ingredient</button> <button>Save ingredients</button></form>
+<script>document.getElementById('add-ingredient').addEventListener('click',function(){const row=document.querySelector('#ingredient-rows tr:last-child');if(row){const next=row.cloneNode(true);next.querySelectorAll('input').forEach(input=>{input.value=input.name==='unit'?'each':''});document.getElementById('ingredient-rows').appendChild(next)}else{location.reload()}})</script>
+{% else %}<ul>{% for row in ingredients %}<li>{{ row.amount|amount }} {{ row.unit }} {{ row.name }}</li>{% endfor %}</ul>{% endif %}
+{% endblock %}

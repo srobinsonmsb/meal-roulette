@@ -1,0 +1,462 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+		DA2B7F05B54E2515BF373BF8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/App.swift;
+			sourceTree = "<group>";
+		};
+		B995F08211E127606968FF5D = {
+			isa = PBXBuildFile;
+			fileRef = DA2B7F05B54E2515BF373BF8;
+		};
+		1ABCE52D34E192C2F2E1FC80 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/GroceryViews.swift;
+			sourceTree = "<group>";
+		};
+		F7D3CF3323FCC43ECB318354 = {
+			isa = PBXBuildFile;
+			fileRef = 1ABCE52D34E192C2F2E1FC80;
+		};
+		4E6931B87C06AC78832EE9C5 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/HouseholdAPI.swift;
+			sourceTree = "<group>";
+		};
+		9186067EE0DA79A0B6D73D52 = {
+			isa = PBXBuildFile;
+			fileRef = 4E6931B87C06AC78832EE9C5;
+		};
+		5792ADE39F0AF2575309AB70 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/HouseholdStore.swift;
+			sourceTree = "<group>";
+		};
+		9842080058C6AAB5E5182326 = {
+			isa = PBXBuildFile;
+			fileRef = 5792ADE39F0AF2575309AB70;
+		};
+		F531592D550689849A0BCC6B = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/MealViews.swift;
+			sourceTree = "<group>";
+		};
+		61604C3A7E5B5A2B3B97FB35 = {
+			isa = PBXBuildFile;
+			fileRef = F531592D550689849A0BCC6B;
+		};
+		55000D9CDEA68412386F49B4 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/Models.swift;
+			sourceTree = "<group>";
+		};
+		759B8D4941B249C68A35017C = {
+			isa = PBXBuildFile;
+			fileRef = 55000D9CDEA68412386F49B4;
+		};
+		FF3C2769B176D1161C8B4B40 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/PlanViews.swift;
+			sourceTree = "<group>";
+		};
+		6189A56520E0D747BC4AB8DF = {
+			isa = PBXBuildFile;
+			fileRef = FF3C2769B176D1161C8B4B40;
+		};
+		12223432EB2593F816C3B310 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRoulette/SettingsViews.swift;
+			sourceTree = "<group>";
+		};
+		87C939A3F58E9F130B7A7F4E = {
+			isa = PBXBuildFile;
+			fileRef = 12223432EB2593F816C3B310;
+		};
+		9AC3B5AD93CBC0305C62F78F = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			path = MealRoulette/Info.plist;
+			sourceTree = "<group>";
+		};
+		EEA102D24430FBEDDCC5483A = {
+			isa = PBXGroup;
+			name = MealRoulette;
+			children = (DA2B7F05B54E2515BF373BF8, 1ABCE52D34E192C2F2E1FC80, 4E6931B87C06AC78832EE9C5, 5792ADE39F0AF2575309AB70, F531592D550689849A0BCC6B, 55000D9CDEA68412386F49B4, FF3C2769B176D1161C8B4B40, 12223432EB2593F816C3B310, 9AC3B5AD93CBC0305C62F78F,);
+			sourceTree = "<group>";
+		};
+		A6D06E4FE118B27071EC677F = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			path = MealRoulette.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6FF76AF0096322158A0BBBB5 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (B995F08211E127606968FF5D, F7D3CF3323FCC43ECB318354, 9186067EE0DA79A0B6D73D52, 9842080058C6AAB5E5182326, 61604C3A7E5B5A2B3B97FB35, 759B8D4941B249C68A35017C, 6189A56520E0D747BC4AB8DF, 87C939A3F58E9F130B7A7F4E,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F05338B155DF6F84DD9E1EAD = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		846D3510A76291E075FDDDDC = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01B991601EDDBC51ED5F8A75 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.mealroulette.household;
+				GENERATE_INFOPLIST_FILE = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				MARKETING_VERSION = 0.3.0;
+				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = MealRoulette/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				ENABLE_TESTABILITY = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+			name = Debug;
+		};
+		7E51EF1A5C6298A6903F2904 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.mealroulette.household;
+				GENERATE_INFOPLIST_FILE = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				MARKETING_VERSION = 0.3.0;
+				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = MealRoulette/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		D7C33E641E9A9E7E6248D828 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (01B991601EDDBC51ED5F8A75, 7E51EF1A5C6298A6903F2904,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		71A8D3518EDDAFE2306FE439 = {
+			isa = PBXNativeTarget;
+			name = MealRoulette;
+			productName = MealRoulette;
+			productReference = A6D06E4FE118B27071EC677F;
+			buildConfigurationList = D7C33E641E9A9E7E6248D828;
+			buildPhases = (6FF76AF0096322158A0BBBB5, F05338B155DF6F84DD9E1EAD, 846D3510A76291E075FDDDDC,);
+			buildRules = ();
+			dependencies = ();
+			productType = "com.apple.product-type.application";
+		};
+		306CD9E44E4B072F8DE1FA89 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRouletteTests/HouseholdAPITests.swift;
+			sourceTree = "<group>";
+		};
+		F96235BE95A9D1CAC47738E9 = {
+			isa = PBXBuildFile;
+			fileRef = 306CD9E44E4B072F8DE1FA89;
+		};
+		BDE05D074FC295A39733B890 = {
+			isa = PBXGroup;
+			name = MealRouletteTests;
+			children = (306CD9E44E4B072F8DE1FA89,);
+			sourceTree = "<group>";
+		};
+		6ED1B0BA9B2B797E5AF2FCAF = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = MealRouletteTests.xctest;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8266A1346FA854EFE584A083 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (F96235BE95A9D1CAC47738E9,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71301088F4CA7B2A0D3B69C5 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		21EC119712805F6A7E06E1E0 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59D864056D0AD3FD4019F6DE = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 244210E48437B6556980A702;
+			proxyType = 1;
+			remoteGlobalIDString = 71A8D3518EDDAFE2306FE439;
+			remoteInfo = MealRoulette;
+		};
+		866AD1B11CE3A2181F7CC282 = {
+			isa = PBXTargetDependency;
+			target = 71A8D3518EDDAFE2306FE439;
+			targetProxy = 59D864056D0AD3FD4019F6DE;
+		};
+		DC14C141EB5DC369BE8685F9 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.mealroulette.household.mealroulettetests;
+				GENERATE_INFOPLIST_FILE = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				MARKETING_VERSION = 0.3.0;
+				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_STYLE = Automatic;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MealRoulette.app/MealRoulette";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				ENABLE_TESTABILITY = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+			name = Debug;
+		};
+		75B121520D80FC74523D1A60 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.mealroulette.household.mealroulettetests;
+				GENERATE_INFOPLIST_FILE = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				MARKETING_VERSION = 0.3.0;
+				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_STYLE = Automatic;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MealRoulette.app/MealRoulette";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		6D994D1DAEEAAFB953E70352 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (DC14C141EB5DC369BE8685F9, 75B121520D80FC74523D1A60,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		85F1DD3256F763F0208E0D8E = {
+			isa = PBXNativeTarget;
+			name = MealRouletteTests;
+			productName = MealRouletteTests;
+			productReference = 6ED1B0BA9B2B797E5AF2FCAF;
+			buildConfigurationList = 6D994D1DAEEAAFB953E70352;
+			buildPhases = (8266A1346FA854EFE584A083, 71301088F4CA7B2A0D3B69C5, 21EC119712805F6A7E06E1E0,);
+			buildRules = ();
+			dependencies = (866AD1B11CE3A2181F7CC282,);
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7003430FBAE55B996BD6862D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = MealRouletteUITests/HouseholdUITests.swift;
+			sourceTree = "<group>";
+		};
+		3847C6E484755FF0AA0DDD4C = {
+			isa = PBXBuildFile;
+			fileRef = 7003430FBAE55B996BD6862D;
+		};
+		0A005074271A31CF25915EB2 = {
+			isa = PBXGroup;
+			name = MealRouletteUITests;
+			children = (7003430FBAE55B996BD6862D,);
+			sourceTree = "<group>";
+		};
+		A27D3991A11F83BA8433FE8E = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = MealRouletteUITests.xctest;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1BFB078F5860336DE4470B1E = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (3847C6E484755FF0AA0DDD4C,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D9666295B65A4D44BF6F31 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51C4826E39608E3BC299D3DB = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B93D8FD00A93B654A71558A = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 244210E48437B6556980A702;
+			proxyType = 1;
+			remoteGlobalIDString = 71A8D3518EDDAFE2306FE439;
+			remoteInfo = MealRoulette;
+		};
+		B1A823F25A98BAD2ABAD57E1 = {
+			isa = PBXTargetDependency;
+			target = 71A8D3518EDDAFE2306FE439;
+			targetProxy = 3B93D8FD00A93B654A71558A;
+		};
+		D409C88734CC64A1523FC3EC = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.mealroulette.household.mealrouletteuitests;
+				GENERATE_INFOPLIST_FILE = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				MARKETING_VERSION = 0.3.0;
+				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_STYLE = Automatic;
+				TEST_TARGET_NAME = MealRoulette;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				ENABLE_TESTABILITY = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+			name = Debug;
+		};
+		5864D5B1F9E21AF0FA51A17E = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.mealroulette.household.mealrouletteuitests;
+				GENERATE_INFOPLIST_FILE = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				MARKETING_VERSION = 0.3.0;
+				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_STYLE = Automatic;
+				TEST_TARGET_NAME = MealRoulette;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		F7E25F2D0FB3EB05459452B2 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (D409C88734CC64A1523FC3EC, 5864D5B1F9E21AF0FA51A17E,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4F7E6528F3C728B2F8E99706 = {
+			isa = PBXNativeTarget;
+			name = MealRouletteUITests;
+			productName = MealRouletteUITests;
+			productReference = A27D3991A11F83BA8433FE8E;
+			buildConfigurationList = F7E25F2D0FB3EB05459452B2;
+			buildPhases = (1BFB078F5860336DE4470B1E, E3D9666295B65A4D44BF6F31, 51C4826E39608E3BC299D3DB,);
+			buildRules = ();
+			dependencies = (B1A823F25A98BAD2ABAD57E1,);
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		0A3E27B8CA818264D75C8D81 = {
+			isa = PBXGroup;
+			name = Products;
+			children = (A6D06E4FE118B27071EC677F, 6ED1B0BA9B2B797E5AF2FCAF, A27D3991A11F83BA8433FE8E,);
+			sourceTree = "<group>";
+		};
+		19F479106CE8C3BA8C106518 = {
+			isa = PBXGroup;
+			children = (EEA102D24430FBEDDCC5483A, BDE05D074FC295A39733B890, 0A005074271A31CF25915EB2, 0A3E27B8CA818264D75C8D81,);
+			sourceTree = "<group>";
+		};
+		73EBF6644258C120893E685D = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				ENABLE_TESTABILITY = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+			name = Debug;
+		};
+		0B0C687DF8B6B8DC790B519C = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		FFE8EE2E0BE1F5956FA67195 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (73EBF6644258C120893E685D, 0B0C687DF8B6B8DC790B519C,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		244210E48437B6556980A702 = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					85F1DD3256F763F0208E0D8E = {
+						TestTargetID = 71A8D3518EDDAFE2306FE439;
+					};
+					4F7E6528F3C728B2F8E99706 = {
+						TestTargetID = 71A8D3518EDDAFE2306FE439;
+					};
+				};
+			};
+			buildConfigurationList = FFE8EE2E0BE1F5956FA67195;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			knownRegions = (en, Base,);
+			mainGroup = 19F479106CE8C3BA8C106518;
+			productRefGroup = 0A3E27B8CA818264D75C8D81;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (71A8D3518EDDAFE2306FE439, 85F1DD3256F763F0208E0D8E, 4F7E6528F3C728B2F8E99706,);
+		};
+	};
+	rootObject = 244210E48437B6556980A702;
+}

@@ -1,0 +1,81 @@
+name: Household application
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: household-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.11'
+      - name: Install locked dependencies
+        run: |
+          python -m pip install uv==0.8.18
+          uv sync --frozen --extra test
+      - name: Verify backend workflows and recovery
+        run: |
+          uv run --extra test pytest -q
+          uv run python -m compileall -q app tests deploy
+      - name: Check generated native project is reproducible
+        run: |
+          python ios/generate_project.py
+          git diff --exit-code -- ios/MealRoulette.xcodeproj
+
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 35
+    env:
+      PYTHONPATH: .
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.11'
+      - name: Install backend fixture dependencies
+        run: |
+          python -m pip install uv==0.8.18
+          uv sync --frozen --extra test
+      - name: Start synthetic household backend
+        run: |
+          uv run python tests/native_fixture_server.py > /tmp/meal-roulette-native-backend.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:5057/api/health; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/meal-roulette-native-backend.log
+          exit 1
+      - name: Select an available iPhone simulator
+        run: |
+          DEVICE=$(xcrun simctl list devices available -j | python -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for runtime,devices in d["devices"].items() if "iOS" in runtime for x in devices if "iPhone" in x["name"]))')
+          echo "IOS_DEVICE=$DEVICE" >> "$GITHUB_ENV"
+          xcrun simctl boot "$DEVICE" || true
+          xcrun simctl bootstatus "$DEVICE" -b
+      - name: Build and test native interface against the real HTTP backend
+        run: |
+          set -o pipefail
+          xcodebuild test -project ios/MealRoulette.xcodeproj -scheme MealRoulette -destination "id=$IOS_DEVICE" -derivedDataPath ios-build -resultBundlePath ios-test-results.xcresult CODE_SIGNING_ALLOWED=NO 2>&1 | tee /tmp/meal-roulette-xcode.log
+      - name: Build simulator application artifact
+        run: |
+          xcodebuild build -project ios/MealRoulette.xcodeproj -scheme MealRoulette -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath ios-build CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO 'ARCHS=arm64 x86_64'
+          ditto -c -k --sequesterRsrc --keepParent ios-build/Build/Products/Debug-iphonesimulator/MealRoulette.app MealRoulette-Simulator.zip
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-ios-build-and-tests
+          path: |
+            MealRoulette-Simulator.zip
+            ios-test-results.xcresult
+            /tmp/meal-roulette-xcode.log
+          if-no-files-found: warn
