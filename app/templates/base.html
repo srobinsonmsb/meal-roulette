@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meal Roulette</title>
+  <style>
+    body {font: 16px system-ui; max-width:1100px; margin:2rem auto; padding:0 1rem; color:#25332b; background:#fafbf8}
+    nav, .actions {display:flex; gap:1rem; flex-wrap:wrap; align-items:center}
+    nav {margin-bottom:2rem} a {color:#255d41} h1,h2 {line-height:1.2}
+    table {width:100%; border-collapse:collapse; background:white; margin:1rem 0}
+    th,td {text-align:left; padding:.7rem; border-bottom:1px solid #ddd}
+    input,select,button {font:inherit; padding:.4rem .6rem; margin:.15rem}
+    button {cursor:pointer} form.inline {display:inline}
+    .notice {padding:.8rem; background:#e6efdf} small {color:#546158}
+    @media(max-width:700px) {table {display:block; overflow:auto}}
+  </style>
+</head>
+<body>
+<nav><strong>Meal Roulette</strong><a href="/">Weekly plans</a><a href="/manage/meals">Meals</a><a href="/manage/eaters">Household</a><a href="/manage/preferences">Preferences</a><a href="/manage/routines">Routines</a></nav>
+{% for message in get_flashed_messages() %}<p class="notice">{{ message }}</p>{% endfor %}
+{% block content %}{% endblock %}
+</body></html>

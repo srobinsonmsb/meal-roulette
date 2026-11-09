@@ -5,6 +5,24 @@ app/token.json
 docker-compose.yml
 
 # Python
+.venv/
+instance/
+.pytest_cache/
+ios-build/
+*.xcresult/
+*.xcuserstate
+xcuserdata/
+MealRoulette-Simulator.zip
+*.backup-config.json
+*.backup-status.json
+*.backup.lock
+*.calendar.lock
+*-backups/
+/household.json
+/legacy-household.json
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
 app/venv/
 __pycache__/
 *.pyc
@@ -18,3 +36,4 @@ pgdata/
 app/test_calendar.py
 CLAUDE.md
 docker-compose.yml
+

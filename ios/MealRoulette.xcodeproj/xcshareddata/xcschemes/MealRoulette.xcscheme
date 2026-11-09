@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Scheme LastUpgradeVersion="1600" version="1.7">
+  <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES">
+    <BuildActionEntries>
+      <BuildActionEntry buildForTesting="YES" buildForRunning="YES" buildForProfiling="YES" buildForArchiving="YES" buildForAnalyzing="YES">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="71A8D3518EDDAFE2306FE439" BuildableName="MealRoulette.app" BlueprintName="MealRoulette" ReferencedContainer="container:MealRoulette.xcodeproj" />
+      </BuildActionEntry>
+      <BuildActionEntry buildForTesting="YES" buildForRunning="NO" buildForProfiling="NO" buildForArchiving="NO" buildForAnalyzing="YES">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="85F1DD3256F763F0208E0D8E" BuildableName="MealRouletteTests.xctest" BlueprintName="MealRouletteTests" ReferencedContainer="container:MealRoulette.xcodeproj" />
+      </BuildActionEntry>
+      <BuildActionEntry buildForTesting="YES" buildForRunning="NO" buildForProfiling="NO" buildForArchiving="NO" buildForAnalyzing="YES">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="4F7E6528F3C728B2F8E99706" BuildableName="MealRouletteUITests.xctest" BlueprintName="MealRouletteUITests" ReferencedContainer="container:MealRoulette.xcodeproj" />
+      </BuildActionEntry>
+    </BuildActionEntries>
+  </BuildAction>
+  <TestAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv="YES">
+    <MacroExpansion>
+      <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="71A8D3518EDDAFE2306FE439" BuildableName="MealRoulette.app" BlueprintName="MealRoulette" ReferencedContainer="container:MealRoulette.xcodeproj" />
+    </MacroExpansion>
+    <Testables>
+      <TestableReference skipped="NO" parallelizable="NO">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="85F1DD3256F763F0208E0D8E" BuildableName="MealRouletteTests.xctest" BlueprintName="MealRouletteTests" ReferencedContainer="container:MealRoulette.xcodeproj" />
+      </TestableReference>
+      <TestableReference skipped="NO" parallelizable="NO">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="4F7E6528F3C728B2F8E99706" BuildableName="MealRouletteUITests.xctest" BlueprintName="MealRouletteUITests" ReferencedContainer="container:MealRoulette.xcodeproj" />
+      </TestableReference>
+    </Testables>
+  </TestAction>
+  <LaunchAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.LLDB" launchStyle="0" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" debugServiceExtension="internal" allowLocationSimulation="YES">
+    <BuildableProductRunnable runnableDebuggingMode="0">
+      <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="71A8D3518EDDAFE2306FE439" BuildableName="MealRoulette.app" BlueprintName="MealRoulette" ReferencedContainer="container:MealRoulette.xcodeproj" />
+    </BuildableProductRunnable>
+  </LaunchAction>
+  <AnalyzeAction buildConfiguration="Debug" />
+  <ArchiveAction buildConfiguration="Release" revealArchiveInOrganizer="YES" />
+</Scheme>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}
+<h1>{{ day }} · {{ meal_type }}</h1><p>This is an exception for this week only. Applying it replaces the current choices for this dinner; your reusable routine stays unchanged.</p>
+<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ plan.revision }}">
+<fieldset><legend>Who is eating?</legend>{% for eater in eaters if eater.active %}<label><input type="checkbox" name="eater_ids" value="{{ eater.eater_id }}" {% if eater.eater_id in rules.eater_ids %}checked{% endif %}>{{ eater.name }}</label>{% endfor %}</fieldset>
+<p><label>Meal arrangement <select name="group_meal"><option value="1" {% if rules.group_meal %}selected{% endif %}>Eat together</option><option value="0" {% if not rules.group_meal %}selected{% endif %}>Plan individually</option></select></label></p>
+<p><label>Dinner choice <select name="kind">{% for value,label in [('meal','Choose a meal'),('eating_out','Eating out'),('leftovers','Leftovers')] %}<option value="{{ value }}" {% if rules.kind == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label></p>
+<p><label>Maximum effort <select name="max_effort"><option value="">Any effort</option>{% for value,label in [(1,'Quick'),(2,'Moderate'),(3,'Involved')] %}<option value="{{ value }}" {% if rules.max_effort == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label></p>
+<p><label>Theme <input name="theme" value="{{ rules.theme }}" placeholder="Any theme"></label></p><button>Apply this week's exception</button> <a href="/?plan={{ plan.plan_id }}">Cancel</a></form>
+{% endblock %}

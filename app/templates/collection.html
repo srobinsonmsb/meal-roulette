@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% set weekdays = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] %}
+{% block content %}
+<h1>{{ kind|capitalize }}</h1>
+{% if kind == 'routines' %}
+<p>Routines provide defaults for new drafts and unchosen meals. Week-specific exceptions and deliberate choices take precedence.</p>
+<form method="post" action="/manage/routines/add">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<label>Day <select name="weekday">{% for day in weekdays %}<option value="{{ loop.index0 }}">{{ day }}</option>{% endfor %}</select></label>
+<label>Mealtime <select name="meal_type"><option>dinner</option><option>lunch</option><option>breakfast</option></select></label>
+<label>Arrangement <select name="group_meal"><option value="1">Shared</option><option value="0">Solo</option></select></label>
+<label>Plan <select name="kind"><option value="meal">Choose a meal</option><option value="eating_out">Eating out</option><option value="leftovers">Leftovers</option></select></label>
+<label>Maximum effort <select name="max_effort"><option value="">Any</option><option value="1">Quick</option><option value="2">Moderate</option><option value="3">Involved</option></select></label>
+<label>Theme <input name="theme" placeholder="Any theme"></label><button>Save routine</button>
+</form>
+<table><thead><tr><th>Day / mealtime</th><th>Routine</th><th>Action</th></tr></thead><tbody>
+{% for row in routines %}<tr><td>{{ weekdays[row.weekday] }} · {{ row.meal_type }}</td><td>{{ 'Shared' if row.group_meal else 'Solo' }} · {{ row.kind|replace('_',' ') }}{% if row.max_effort %} · max effort {{ row.max_effort }}{% endif %}{% if row.theme %} · {{ row.theme }}{% endif %}</td><td><form method="post" action="/routines/{{ row.weekday }}/{{ row.meal_type }}/remove"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button>Remove</button></form></td></tr>{% endfor %}
+</tbody></table>
+{% else %}
+{% if kind in ['eaters','meals'] %}<p>Archived entries stay in saved plans and backups. They are excluded from new meal selection.</p>{% endif %}
+<form action="/manage/{{ kind }}/add" method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+{% if kind == 'eaters' %}
+<label>Name <input name="eater_name" required></label>
+{% elif kind == 'meals' %}
+<label>Meal name <input name="meal_description" required></label>
+<select name="meal_type"><option value="dinner">Dinner</option><option value="lunch">Lunch</option><option value="breakfast">Breakfast</option></select>
+<label>Effort <select name="effort_level"><option value="">Not recorded</option><option value="1">Quick</option><option value="2">Moderate</option><option value="3">Involved</option></select></label>
+<label>Theme <input name="theme" placeholder="Optional"></label>
+<label>Serves <input type="number" name="servings" value="1" step="any" min="0.00000001" required></label>
+{% else %}
+<label>Who <select name="eater_id">{% for eater in eaters if eater.active %}<option value="{{ eater.eater_id }}">{{ eater.name }}</option>{% endfor %}</select></label>
+<label>Meal <select name="meal_id">{% for meal in meals if meal.active %}<option value="{{ meal.meal_id }}">{{ meal.meal_description }}</option>{% endfor %}</select></label>
+{% endif %}
+<button>Add</button></form>
+{% if kind in ('eaters', 'meals') %}
+<table><thead><tr><th>Name</th><th>Status</th><th>Action</th></tr></thead><tbody>
+{% for row in eaters if kind == 'eaters' %}<tr><td>{{ row.name }}</td><td>{{ 'Active' if row.active else 'Archived' }}</td><td>{% if row.active %}<form method="post" action="/manage/eaters/archive/{{ row.eater_id }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button>Archive</button></form>{% endif %}</td></tr>{% endfor %}
+{% for row in meals if kind == 'meals' %}<tr><td><a href="/meals/{{ row.meal_id }}">{{ row.meal_description }}</a><br><small>{{ row.meal_type }} · serves {{ row.servings|amount }}{% if row.theme %} · {{ row.theme }}{% endif %}{% if row.effort_level %} · effort {{ row.effort_level }}{% endif %}</small></td><td>{{ 'Active' if row.active else 'Archived' }}</td><td><a href="/meals/{{ row.meal_id }}">Details &amp; ingredients</a>{% if row.active %}<form method="post" action="/manage/meals/archive/{{ row.meal_id }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button>Archive</button></form>{% endif %}</td></tr>{% endfor %}
+</tbody></table>
+{% else %}
+<p>Only meals on each person's list are eligible for automatic selection.</p>
+<table><thead><tr><th>Who</th><th>Approved meal</th><th>Action</th></tr></thead><tbody>
+{% for preference in preferences %}
+{% set eater = eaters|selectattr('eater_id','equalto',preference.eater_id)|first %}
+{% set meal = meals|selectattr('meal_id','equalto',preference.meal_id)|first %}
+{% if eater.active and meal.active %}<tr><td>{{ eater.name }}</td><td>{{ meal.meal_description }}</td><td><form method="post" action="/manage/preferences/remove/{{ eater.eater_id }}/{{ meal.meal_id }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button>Remove</button></form></td></tr>{% endif %}
+{% endfor %}</tbody></table>
+{% endif %}
+{% endif %}
+{% endblock %}

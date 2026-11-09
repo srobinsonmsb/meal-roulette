@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block content %}
+<h1>Groceries · week of {{ groceries.week_start }}</h1><p><a href="/?plan={{ groceries.plan_id }}">← Return to the meal plan</a></p>
+{% for warning in groceries.warnings %}<p class="notice">{{ warning }} <a href="/manage/meals">Update meal ingredients</a></p>{% endfor %}
+{% if groceries['items'] %}<table><thead><tr><th>Ingredient / item</th><th>Amount to buy</th><th>Status</th><th>Update</th></tr></thead><tbody>
+{% for item in groceries['items'] %}<tr><td>{{ item.name }}{% if item.manual %}<br><small>Added manually</small>{% endif %}</td><td>{{ item.amount|amount }} {{ item.unit }}{% if item.needs_review %}<br><small>{% if item.previous_amount %}Changed from {{ item.previous_amount|amount }}.{% else %}Quantity changed.{% endif %} Please review.</small>{% endif %}</td>
+<td>{% if item.checked %}Purchased{% elif item.excluded %}Already at home{% elif item.needs_review %}Quantity changed{% else %}To buy{% endif %}</td>
+<td><form method="post" action="/plans/{{ groceries.plan_id }}/groceries/{{ item.item_id }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ groceries.revision }}">
+{% if item.checked or item.excluded %}<button name="action" value="needed">Need to buy</button>{% else %}<button name="action" value="purchased">Purchased</button><button name="action" value="owned">Already have</button>{% endif %}
+{% if item.needs_review %}<button name="action" value="reviewed">Reviewed</button>{% endif %}{% if item.manual %}<button name="action" value="remove">Remove</button>{% endif %}
+</form></td></tr>{% endfor %}</tbody></table>{% else %}<p>No grocery requirements yet. Add ingredients to planned meals, or add an item below.</p>{% endif %}
+<h2>Add an item</h2><form method="post" action="/plans/{{ groceries.plan_id }}/groceries/add"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="revision" value="{{ groceries.revision }}"><label>Item <input name="name" required></label><label>Amount <input type="number" name="amount" value="1" min="0.00000001" step="any" required></label><label>Unit <input name="unit" value="each" required></label><button>Add to shared list</button></form>
+{% endblock %}

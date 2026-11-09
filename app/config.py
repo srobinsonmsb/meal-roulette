@@ -1,10 +1,4 @@
 import datetime
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-calendar_id = os.getenv("GOOGLE_CALENDAR_ID")
 
 def build_weekly_schedule():
     weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -47,4 +41,5 @@ def backfill_schedule_with_dates(weekly_schedule, dates_per_day):
             date = dates_per_day[day]
             schedule_with_dates[(date, meal)] = value
     return schedule_with_dates
+
 
